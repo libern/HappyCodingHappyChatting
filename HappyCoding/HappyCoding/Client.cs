@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Text;
+using System.Windows.Forms;
 
 namespace HappyCoding
 {
@@ -60,20 +61,30 @@ namespace HappyCoding
                     new AsyncCallback(ConnectCallback), client);
                 connectDone.WaitOne();
 
+
+                /**
+                 * 
+                 * Reminder:
+                 * 
+                 * You might want to change send and receive function for Someline Chat.
+                 * 
+                 * The following is only a demo of how socket works.
+                 * 
+                 * 
+                 */
+                // Receive the response from the remote device.
+                Receive(client);
+//                receiveDone.WaitOne();
+
                 // Send test data to the remote device.
                 Send(client, "This is a test<EOF>");
                 sendDone.WaitOne();
 
-                // Receive the response from the remote device.
-                Receive(client);
-                receiveDone.WaitOne();
-
-                // Write the response to the console.
-                Console.WriteLine("Response received : {0}", response);
 
                 // Release the socket.
-                client.Shutdown(SocketShutdown.Both);
-                client.Close();
+                // For Someline Chat, the client is not closed..
+                //                client.Shutdown(SocketShutdown.Both);
+                //                client.Close();
 
             }
             catch (Exception e)
@@ -135,6 +146,22 @@ namespace HappyCoding
                 // Read data from the remote device.
                 int bytesRead = client.EndReceive(ar);
 
+                /**
+                 * 
+                 * Reminder:
+                 * 
+                 * These following parts are not modified to ultimate.
+                 * Keep one thing in mind. BeginReceive() only have one EndReceive(), 
+                 * after you finish EndReceive(), you should BeginReceive() again.
+                 * 
+                 * These following codes should be changed if you use it for Someline Chat.
+                 * 
+                 * Following codes, may result in have more than one response at the same time.
+                 * e.g. {"SomelineResponseCode":"120001"}{"SomelineResponseCode":"220002"}
+                 * 
+                 * You should modify it in order to make it receive one at a time for easy decode.
+                 * 
+                 */
                 if (bytesRead > 0)
                 {
                     state.sb.Append(Encoding.ASCII.GetString(state.buffer, 0, bytesRead));
@@ -152,9 +179,15 @@ namespace HappyCoding
                     if (state.sb.Length > 1)
                     {
                         response = state.sb.ToString();
+
+                        // Write the response to the console.
+                        Console.WriteLine("Response received : {0}", response);
+                        MessageBox.Show("Response received : " + response);
                     }
                     // Signal that all bytes have been received.
                     receiveDone.Set();
+
+                    client.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ReceiveCallback), state);
                 }
 
             }
