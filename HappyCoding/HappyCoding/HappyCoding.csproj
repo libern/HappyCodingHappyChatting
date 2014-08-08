@@ -44,23 +44,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AndrewClass.cs" />
     <Compile Include="Chat.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Chat.Designer.cs">
       <DependentUpon>Chat.cs</DependentUpon>
     </Compile>
-    <Compile Include="ClassLibern.cs" />
+    <Compile Include="Client.cs" />
     <Compile Include="FriendList.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FriendList.Designer.cs">
       <DependentUpon>FriendList.cs</DependentUpon>
     </Compile>
-    <Compile Include="IvyClass.cs" />
-    <Compile Include="LesterClass.cs" />
-    <Compile Include="LibernClass.cs" />
     <Compile Include="Login.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -5,7 +5,6 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace HappyCoding
@@ -15,6 +14,16 @@ namespace HappyCoding
         public Chat()
         {
             InitializeComponent();
+
+            var email = "happy@someline.com";
+            var password = "12345678";
+
+//            Client SomelineClient = new Client();
+            Client.StartClient();
         }
+
+
+
+
     }
 }
