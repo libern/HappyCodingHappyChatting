@@ -47,7 +47,7 @@ namespace HappyCoding
                 // Establish the remote endpoint for the socket.
                 // The name of the 
                 // remote device is "host.contoso.com".
-                IPHostEntry ipHostInfo = Dns.GetHostEntry("localhost");
+                IPHostEntry ipHostInfo = Dns.GetHostEntry("im.someline.com");
                 IPAddress ipAddress = ipHostInfo.AddressList[0];
                 IPEndPoint remoteEP = new IPEndPoint(ipAddress, port);
 
