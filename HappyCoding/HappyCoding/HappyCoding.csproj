@@ -51,8 +51,7 @@
     <Compile Include="Chat.Designer.cs">
       <DependentUpon>Chat.cs</DependentUpon>
     </Compile>
-    <Compile Include="ClassLester.cs" />
-    <Compile Include="ClassAndrew.cs" />
+    <Compile Include="ClassLibern.cs" />
     <Compile Include="FriendList.cs">
       <SubType>Form</SubType>
     </Compile>
