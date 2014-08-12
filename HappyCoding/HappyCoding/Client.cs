@@ -26,6 +26,10 @@ namespace HappyCoding
 
     public class Client
     {
+        /**
+         * Attributes
+         * Static function cannot access these
+         */
         // The port number for the remote device.
         private const int port = 8000;
 
@@ -40,7 +44,9 @@ namespace HappyCoding
         // The response from the remote device.
         private static String response = String.Empty;
 
-        public static void StartClient()
+        private Socket client;
+
+        public void StartClient()
         {
             // Connect to a remote device.
             try
@@ -53,7 +59,7 @@ namespace HappyCoding
                 IPEndPoint remoteEP = new IPEndPoint(ipAddress, port);
 
                 // Create a TCP/IP socket.
-                Socket client = new Socket(AddressFamily.InterNetwork,
+                client = new Socket(AddressFamily.InterNetwork,
                     SocketType.Stream, ProtocolType.Tcp);
 
                 // Connect to the remote endpoint.
@@ -74,11 +80,11 @@ namespace HappyCoding
                  */
                 // Receive the response from the remote device.
                 Receive(client);
-//                receiveDone.WaitOne();
+                //                receiveDone.WaitOne();
 
                 // Send test data to the remote device.
-                Send(client, "This is a test<EOF>");
-                sendDone.WaitOne();
+//                Send(client, "This is a test<EOF>");
+//                sendDone.WaitOne();
 
 
                 // Release the socket.
@@ -135,6 +141,29 @@ namespace HappyCoding
         }
 
         private static void ReceiveCallback(IAsyncResult ar)
+        {
+            try
+            {
+                StateObject state = (StateObject)ar.AsyncState;
+                Socket client = state.workSocket;
+                int bytesRead = client.EndReceive(ar);
+                if (bytesRead > 0)
+                {
+                    String ReceivedString = Encoding.UTF8.GetString(state.buffer, 0, bytesRead);
+                    ClientRouter router = ClientRouter.getInstance();
+                    router.route(ReceivedString);
+
+                }
+                client.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ReceiveCallback),
+                    state);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error When Receving Data:" + e.ToString());
+            }
+        }
+
+        private static void ReceiveCallbackOld(IAsyncResult ar)
         {
             try
             {
@@ -232,5 +261,14 @@ namespace HappyCoding
         //            StartClient();
         //            return 0;
         //        }
+
+        public void Send(String jsonString)
+        {
+            byte[] byteData = Encoding.ASCII.GetBytes(jsonString);
+
+            client.BeginSend(byteData, 0, byteData.Length, 0,
+                new AsyncCallback(SendCallback), client);
+        }
+
     }
 }
